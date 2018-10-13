@@ -1,0 +1,62 @@
+---
+title: "Beer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(readr)
+library(plyr)
+library(knitr)
+library(ggplot2)
+```
+
+###import data
+```{r import data}
+setwd("~/Documents/GitHub/SMU-MSDS/Homework/DoingDataScience/CaseStudy1")
+Beers <- read_csv("Beers.csv")
+Breweries <- read_csv("Breweries.csv")
+```
+
+###breweries by state
+```{r by state}
+kable(count(Breweries, vars = "State"), align = "l")
+```
+
+###merge by brewery
+```{r merge datasets}
+final <- merge(Beers, Breweries, by.x = "Brewery_id", by.y = "Brew_ID")
+names(final)[c(2,8)] <- c("Beer_name", "Brewery_name")
+kable(head(final, 6))
+kable(tail(final, 6))
+```
+
+###count NA values
+```{r count NA values per column}
+na_count <- data.frame(sapply(final, function(y) sum(length(which(is.na(y))))))
+names(na_count) <- "NA_Count"
+kable(na_count, align = "l")
+```
+
+###median ABV and IBU by state
+```{r median abv and ibu}
+median_abv <- aggregate(ABV~State, final, FUN=median)
+
+#SD has no IBU values and does not show up in the table
+median_ibu <- aggregate(IBU~State, final, FUN=median)
+
+#let's do ggplot for this
+barplot(median_abv$ABV)
+```
+
+###find the beers with the highest ABV and IBU
+```{r max abv and ibu}
+kable(final[which.max(final$ABV),])
+kable(final[which.max(final$IBU),])
+summary(final$ABV)
+```
+
+
