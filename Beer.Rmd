@@ -48,8 +48,12 @@ median_abv <- aggregate(ABV~State, final, FUN=median)
 #SD has no IBU values and does not show up in the table
 median_ibu <- aggregate(IBU~State, final, FUN=median)
 
-#let's do ggplot for this
-barplot(median_abv$ABV)
+###Barplot of median alochol content by state
+ggplot(data=median_abv, aes(x=reorder(median_abv$State,desc(median_abv$State)), y=median_abv$ABV,fill=median_abv$State)) + geom_bar(stat='identity') + labs(x="State", y="Median ABV (Alcoholic Content)") + coord_flip() + guides(fill=guide_legend(title="State"))
+
+###Barplot of median international bitterness unit by state 
+ggplot(data=median_ibu, aes(x=reorder(median_ibu$State,desc(median_ibu$State)), y=median_ibu$IBU,fill=median_ibu$State)) + geom_bar(stat='identity') + labs(x="State", y="Median IBU (International Bitterness Unit)") + coord_flip() + guides(fill=guide_legend(title="State"))
+
 ```
 
 ###find the beers with the highest ABV and IBU
