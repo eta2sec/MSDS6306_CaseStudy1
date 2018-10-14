@@ -47,8 +47,10 @@ median_abv <- aggregate(ABV~State, final, FUN=median)
 
 #SD has no IBU values and does not show up in the table
 median_ibu <- aggregate(IBU~State, final, FUN=median)
+```
 
 ###Barplot of median alochol content by state
+```{r barplot of median abv & ibu}
 ggplot(data=median_abv, aes(x=reorder(median_abv$State,desc(median_abv$State)), y=median_abv$ABV,fill=median_abv$State)) + geom_bar(stat='identity') + labs(x="State", y="Median ABV (Alcoholic Content)") + coord_flip() + guides(fill=guide_legend(title="State"))
 
 ###Barplot of median international bitterness unit by state 
@@ -63,4 +65,13 @@ kable(final[which.max(final$IBU),])
 summary(final$ABV)
 ```
 
+###draw scatterplot for relationship between bitterness and alcoholic content
+```{r Scatterplot - relationship btwn IBU & ABV}
+IBU_ABV_df <- merge(median_ibu, median_abv, by = 'State')
 
+ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point() + labs(x="Median IBU", y="Median ABV") + guides(fill=guide_legend(title="State"))
+
+ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point() + labs(x="Median IBU", y="Median ABV") + guides(fill=guide_legend(title="State")) + geom_text(label=IBU_ABV_df$State)
+
+# With the exception of Utah and New Jersey, it appears that the higher the bitterness unit within a beer, the more alcoholic content the beer contains.
+```
