@@ -81,9 +81,7 @@ summary(final$ABV)
 ``` {r relationship, echo=FALSE, results='markup'}
 IBU_ABV_df <- merge(median_ibu, median_abv, by = 'State')
 
-ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point() + labs(x="Median IBU", y="Median ABV") + guides(fill=guide_legend(title="State"))
-
-ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point() + labs(x="Median IBU", y="Median ABV") + guides(fill=guide_legend(title="State")) + geom_text(label=IBU_ABV_df$State)
+ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point() + labs(x="Median IBU", y="Median ABV") + guides(fill=FALSE) + geom_text(label=IBU_ABV_df$State)
 
 # With the exception of Utah and New Jersey, it appears that the higher the bitterness unit within a beer, the more alc
 ```
