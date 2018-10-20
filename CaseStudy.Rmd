@@ -13,7 +13,8 @@ library(knitr)
 library(ggplot2)
 options(readr.num_columns = 0)
 
-setwd("/Users/jackson/Desktop")
+#setwd("/Users/jackson/Desktop")
+setwd("~/Documents/GitHub/MSDS6306_CaseStudy1")
 Beers <- read_csv("Beers.csv")
 Breweries <- read_csv("Breweries.csv")
 ```
@@ -22,6 +23,11 @@ Breweries <- read_csv("Breweries.csv")
 ```{r bbs, echo=FALSE, results='markup'}
 kable(count(Breweries, vars = "State"), align = "l")
 ###merge by brewery
+
+stateData <- as.data.frame(state.x77)
+row.names(stateData) <- state.abb
+stateData <- stateData[8]
+test <- 0
 ```
 
 ## First 6 observations of breweries in America
