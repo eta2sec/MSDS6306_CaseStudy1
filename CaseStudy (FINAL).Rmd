@@ -1,0 +1,97 @@
+---
+title: "Breweries in America"
+author: "JAu + EAdams"
+date: "10/14/2018"
+output: html_document
+---
+
+#Introduction
+#### We will be looking at the beer industry across America! We answer questions that die-hard beer connoisseurs wonder when planning their next brewery tour. Our research dives into beers and breweries across the United States. Beers with the most alcoholic content? Into bitter beer? Our research has it!
+
+```{r setup, echo =FALSE, results="hide", fig.show="hide",}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(plyr)
+library(knitr)
+library(ggplot2)
+options(readr.num_columns = 0)
+
+setwd("/Users/jackson/Desktop")
+Beers <- read_csv("Beers.csv")
+Breweries <- read_csv("Breweries.csv")
+#uploading data
+```
+
+## Breweries by State (with counts)
+```{r bbs, echo=FALSE, results='markup'}
+kable(count(Breweries, vars = "State"), align = "l")
+###merging both (beer and brewery data sets); merge by brewery
+```
+
+## First 6 observations of breweries in America
+```{r merging, echo=FALSE, results='markup'}
+final <- merge(Beers, Breweries, by.x = "Brewery_id", by.y = "Brew_ID")
+names(final)[c(2,8)] <- c("Beer_name", "Brewery_name")
+kable(head(final, 6))
+```
+
+```{r last6, echo=FALSE, results='markup'}
+## Last 6 observations of breweries in America
+kable(tail(final, 6))
+###count NA values
+```
+
+## How many NAs?
+``` {r NAcount, echo=FALSE, results='markup'}
+na_count <- data.frame(sapply(final, function(y) sum(length(which(is.na(y))))))
+names(na_count) <- "NA_Count"
+kable(na_count, align = "l")
+###median ABV and IBU by state
+```
+
+## Barplot of median ABV per State
+``` {r median_barplots_abv, echo=FALSE, results='markup'}
+median_abv <- aggregate(ABV~State, final, FUN=median)
+#SD has no IBU values and does not show up in the table
+median_ibu <- aggregate(IBU~State, final, FUN=median)
+
+###Creating barplot of median alochol content by state
+ggplot(data=median_abv, aes(x=reorder(median_abv$State,desc(median_abv$State)), y=median_abv$ABV,fill=median_abv$State)) + geom_bar(stat='identity') + labs(x="State", y="Median ABV (Alcoholic Content)") + coord_flip() + guides(fill=guide_legend(title="State"))
+```
+
+
+## Barplot of median international bitterness unit by State 
+``` {r median_barplots_ibu, echo=FALSE, results='markup'}
+ggplot(data=median_ibu, aes(x=reorder(median_ibu$State,desc(median_ibu$State)), y=median_ibu$IBU,fill=median_ibu$State)) + geom_bar(stat='identity') + labs(x="State", y="Median IBU (International Bitterness Unit)") + coord_flip() + guides(fill=guide_legend(title="State"))
+```
+
+## Which state has the maximum alcoholic (ABV) beer?
+``` {r max_abv_beer, echo=FALSE, results='markup'} 
+kable(final[which.max(final$ABV),])
+```
+
+## Which state has the most bitter (IBU) beer?
+``` {r max_ibu_beer, echo=FALSE, results='markup'}
+kable(final[which.max(final$IBU),])
+```
+
+## Summary statistics for ABV variable
+``` {r abv_stats, echo=FALSE, results='markup'}
+summary(final$ABV)
+
+```
+
+## Possible relationship between ABV and IBU?
+``` {r relationship, echo=FALSE, results='markup'}
+IBU_ABV_df <- merge(median_ibu, median_abv, by = 'State')
+
+ggplot(data=IBU_ABV_df, aes(x=IBU_ABV_df$IBU,y=IBU_ABV_df$ABV, fill=IBU_ABV_df$State)) + geom_point(shape = '.') + labs(x="Median IBU", y="Median ABV") + guides(fill=FALSE) + geom_text(label=IBU_ABV_df$State)
+
+# With the exception of Utah and New Jersey, it appears that the higher the bitterness unit within a beer, the more alc
+```
+
+# Conclusion
+#### States with the most breweries: CO, CA, MI, OR, TX 
+#### For those who love hard alcohol: Colorado has the most alcoholic beer; Washington DC with the most alcoholic breweries
+#### For those into bitter: Oregon has the most bitter beer; Maine with the most bitter breweries
+#### There is a relationship between IBU and ABV. Units tend to increase for both.
